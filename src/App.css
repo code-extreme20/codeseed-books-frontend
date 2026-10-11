@@ -182,3 +182,143 @@
     border-right-color: var(--border);
   }
 }
+
+/* ================================
+   CODESEED - COMING SOON FEATURE
+================================ */
+
+/* Book cover positioning */
+.ebook-cover {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Coming Soon badge */
+.coming-soon-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 13px;
+  border-radius: 50px;
+
+  background: linear-gradient(135deg, #ffe59a, #f5b82e);
+  color: #211a0b;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  line-height: 1.2;
+  text-transform: uppercase;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.22);
+}
+
+/* Coming Soon purchase button */
+.book-info .buy-button:disabled {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+
+  padding: 12px 18px;
+  border: 1px solid rgba(245, 184, 46, 0.5);
+  border-radius: 10px;
+
+  background: #f5b82e;
+  color: #211a0b;
+
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  opacity: 0.85;
+  cursor: not-allowed;
+}
+
+/* Message below purchase button */
+.book-note {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .coming-soon-badge {
+    top: 8px;
+    left: 8px;
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+}
+
+/* Premium Buy Ebook Button */
+.buy-button {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 13px 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(16, 185, 129, 0.22);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.buy-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 9px 22px rgba(16, 185, 129, 0.32);
+}
+
+.buy-button:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
+}
+
+.buy-button:focus-visible {
+  outline: 3px solid rgba(16, 185, 129, 0.4);
+  outline-offset: 3px;
+}
+
+/* Coming Soon / Disabled Button */
+.buy-button:disabled {
+  background: #e8edf0;
+  color: #64748b;
+  border-color: #dce3e8;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 1;
+  transform: none;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .buy-button {
+    min-height: 46px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+}

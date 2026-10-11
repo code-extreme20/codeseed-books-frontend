@@ -30,6 +30,7 @@ const emptyForm = {
   level: "Beginner",
   format: "Digital PDF Ebook",
   isPublished: false,
+  comingSoon: false,
 };
 
 function getToken() {
@@ -140,6 +141,7 @@ export default function Dashboard() {
       level: book.level || "Beginner",
       format: book.format || "Digital PDF Ebook",
       isPublished: Boolean(book.isPublished),
+      comingSoon: Boolean(book.comingSoon),
     });
 
     setPdfFile(null);
@@ -822,6 +824,15 @@ export default function Dashboard() {
                   onChange={updateField}
                 />
                 Publish this book on the public website
+              </label>
+              <label className="admin-publish-option">
+                <input
+                  type="checkbox"
+                  name="comingSoon"
+                  checked={form.comingSoon}
+                  onChange={updateField}
+                />
+                This is a coming soon book
               </label>
             </div>
 

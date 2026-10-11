@@ -1349,3 +1349,27 @@
     min-width: 850px;
   }
 }
+
+/* Coming Soon checkbox in admin book form */
+.admin-publish-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 16px;
+  border: 1px solid rgba(245, 184, 46, 0.4);
+  border-radius: 10px;
+
+  background: rgba(245, 184, 46, 0.08);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-publish-option input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #f5b82e;
+  cursor: pointer;
+}

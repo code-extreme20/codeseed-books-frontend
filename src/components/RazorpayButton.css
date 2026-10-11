@@ -1,0 +1,167 @@
+
+.razorpay-purchase {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.purchase-btn {
+  position: relative;
+  width: 100%;
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 18px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    opacity 0.22s ease;
+}
+
+/* Buy Ebook */
+.buy-ebook-btn {
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  box-shadow: 0 5px 16px rgba(99, 91, 255, 0.24);
+}
+
+.buy-ebook-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #6d28d9, #4338ca);
+  box-shadow: 0 9px 24px rgba(99, 91, 255, 0.34);
+  transform: translateY(-2px);
+}
+
+.buy-ebook-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.purchase-arrow {
+  margin-left: auto;
+  font-size: 21px;
+  line-height: 1;
+  transition: transform 0.22s ease;
+}
+
+.buy-ebook-btn:hover:not(:disabled) .purchase-arrow {
+  transform: translateX(3px);
+}
+
+/* Download Ebook */
+.download-btn {
+  color: #ffffff;
+  background: linear-gradient(135deg, #10b981, #047857);
+  box-shadow: 0 5px 16px rgba(5, 150, 105, 0.2);
+}
+
+.download-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #065f46);
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Retry Verification */
+.retry-verification-btn {
+  color: #4338ca;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  font-size: 13px;
+}
+
+.retry-verification-btn:hover:not(:disabled) {
+  background: #e0e7ff;
+}
+
+/* Loading spinner */
+.purchase-spinner {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: purchase-spin 0.7s linear infinite;
+}
+
+.retry-spinner {
+  border-color: rgba(67, 56, 202, 0.2);
+  border-top-color: #4338ca;
+}
+
+@keyframes purchase-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled state */
+.purchase-btn:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Keyboard accessibility */
+.purchase-btn:focus-visible {
+  outline: 3px solid #a5b4fc;
+  outline-offset: 3px;
+}
+
+/* Payment status */
+.purchase-message {
+  margin: 2px 0 0;
+  padding: 11px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .razorpay-purchase {
+    gap: 9px;
+    margin-top: 12px;
+  }
+
+  .purchase-btn {
+    min-height: 46px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .retry-verification-btn {
+    font-size: 12px;
+  }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .purchase-btn,
+  .purchase-arrow {
+    transition: none;
+  }
+
+  .purchase-spinner {
+    animation-duration: 1.5s;
+  }
+}

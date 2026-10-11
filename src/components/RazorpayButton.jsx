@@ -1,10 +1,10 @@
 
 import { useState } from "react";
 import axios from "axios";
+import "./RazorpayButton.css";
 
 const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -21,15 +21,12 @@ function loadRazorpayScript() {
       existingScript.addEventListener("load", () =>
         resolve(Boolean(window.Razorpay))
       );
-      existingScript.addEventListener("error", () =>
-        resolve(false)
-      );
+      existingScript.addEventListener("error", () => resolve(false));
       return;
     }
 
     const script = document.createElement("script");
-    script.src =
-      "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
 
     script.onload = () => resolve(Boolean(window.Razorpay));
@@ -55,17 +52,16 @@ export default function RazorpayButton({ bookId, bookTitle }) {
   const [message, setMessage] = useState("");
   const [verificationDetails, setVerificationDetails] =
     useState(null);
-  const [hasDownloadToken, setHasDownloadToken] = useState(() => {
-    if (!bookId || typeof window === "undefined") return false;
-
-    return Boolean(
-      sessionStorage.getItem(`codeseed_download_${bookId}`)
-    );
-  });
 
   const storageKey = `codeseed_download_${bookId}`;
 
-  // Verify the payment with the backend and save the download token.
+  const [hasDownloadToken, setHasDownloadToken] = useState(() => {
+    if (!bookId || typeof window === "undefined") return false;
+
+    return Boolean(sessionStorage.getItem(storageKey));
+  });
+
+  // Verify payment and save the download token.
   const verifyExistingPayment = async (details) => {
     const { data } = await axios.post(
       `${API_URL}/payments/verify`,
@@ -85,7 +81,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
     setMessage("Payment verified. Your ebook is ready to download.");
   };
 
-  // Create a Razorpay order and open checkout.
+  // Create Razorpay order and open checkout.
   const handlePayment = async () => {
     if (!bookId || loading) {
       if (!bookId) {
@@ -114,11 +110,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
         { bookId }
       );
 
-      if (
-        !data?.success ||
-        !data?.order?.id ||
-        !data?.keyId
-      ) {
+      if (!data?.success || !data?.order?.id || !data?.keyId) {
         throw new Error("Could not create the payment order.");
       }
 
@@ -137,7 +129,6 @@ export default function RazorpayButton({ bookId, bookTitle }) {
             razorpay_signature: response.razorpay_signature,
           };
 
-          // Keep the signed response in memory for retrying.
           setVerificationDetails(details);
           setLoading(true);
           setMessage("Verifying your payment...");
@@ -186,7 +177,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
     }
   };
 
-  // Retry verification without creating another payment order.
+  // Retry verification without creating another order.
   const handleRetryVerification = async () => {
     if (!verificationDetails || retryingVerification) return;
 
@@ -207,7 +198,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
     }
   };
 
-  // Download the purchased PDF.
+  // Download purchased PDF.
   const handleDownload = async () => {
     const token = sessionStorage.getItem(storageKey);
 
@@ -261,13 +252,12 @@ export default function RazorpayButton({ bookId, bookTitle }) {
           const parsed = JSON.parse(body);
           errorMessage = parsed.message || errorMessage;
         } catch {
-          // Keep the fallback message.
+          // Use fallback message.
         }
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
 
-      // Clear stale token if the backend rejects authorization.
       if (
         error.response?.status === 401 ||
         error.response?.status === 403
@@ -287,35 +277,70 @@ export default function RazorpayButton({ bookId, bookTitle }) {
       {hasDownloadToken ? (
         <button
           type="button"
+          className="purchase-btn download-btn"
           onClick={handleDownload}
           disabled={downloading}
         >
-          {downloading ? "Preparing PDF..." : "Download Ebook"}
+          {downloading ? (
+            <>
+              <span className="purchase-spinner" />
+              Preparing PDF...
+            </>
+          ) : (
+            <>
+              <span aria-hidden="true">↓</span>
+              Download Ebook
+            </>
+          )}
         </button>
       ) : (
         <button
           type="button"
+          className="purchase-btn buy-ebook-btn"
           onClick={handlePayment}
           disabled={loading || !bookId}
         >
-          {loading ? "Please wait..." : "Buy Ebook"}
+          {loading ? (
+            <>
+              <span className="purchase-spinner" />
+              Please wait...
+            </>
+          ) : (
+            <>
+              <span aria-hidden="true">🛒</span>
+              Buy Ebook
+              <span className="purchase-arrow" aria-hidden="true">
+                →
+              </span>
+            </>
+          )}
         </button>
       )}
 
       {verificationDetails && (
         <button
           type="button"
+          className="purchase-btn retry-verification-btn"
           onClick={handleRetryVerification}
           disabled={retryingVerification || loading}
         >
-          {retryingVerification
-            ? "Verifying..."
-            : "Retry Payment Verification"}
+          {retryingVerification ? (
+            <>
+              <span className="purchase-spinner retry-spinner" />
+              Verifying...
+            </>
+          ) : (
+            "Retry Payment Verification"
+          )}
         </button>
       )}
 
       {message && (
-        <p role="status" aria-live="polite">
+        <p
+          className="purchase-message"
+          role="status"
+          aria-live="polite"
+        >
           {message}
         </p>
       )}

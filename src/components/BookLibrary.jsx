@@ -1,11 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  BookOpen,
-  Search,
-  Code2,
-} from "lucide-react";
+import { BookOpen, Search, Code2 } from "lucide-react";
 import axios from "axios";
 
 import RazorpayButton from "./RazorpayButton";
@@ -21,30 +17,29 @@ export default function BookLibrary() {
   useEffect(() => {
     let active = true;
 
-    const fetchBooks = async () => {
+    async function fetchBooks() {
       try {
         setLoading(true);
         setError("");
 
         const response = await axios.get(`${API_URL}/books`);
 
-        if (active) {
-          const data = response.data;
+        if (!active) return;
 
-          // Supports either an array or an object containing books.
-          const bookList = Array.isArray(data)
-            ? data
-            : Array.isArray(data.books)
-              ? data.books
-              : [];
+        const data = response.data;
 
-          setBooks(bookList);
-        }
+        const bookList = Array.isArray(data)
+          ? data
+          : Array.isArray(data.books)
+            ? data.books
+            : [];
+
+        setBooks(bookList);
       } catch (err) {
         if (active) {
           setError(
             err.response?.data?.message ||
-              "Unable to load ebooks. Please try again."
+            "Unable to load ebooks. Please try again."
           );
         }
       } finally {
@@ -52,7 +47,7 @@ export default function BookLibrary() {
           setLoading(false);
         }
       }
-    };
+    }
 
     fetchBooks();
 
@@ -62,9 +57,8 @@ export default function BookLibrary() {
   }, []);
 
   const filteredBooks = books.filter((book) =>
-    `${book.title || ""} ${book.category || ""} ${
-      book.description || ""
-    }`
+    `${book.title || ""} ${book.category || ""} ${book.description || ""
+      }`
       .toLowerCase()
       .includes(search.trim().toLowerCase())
   );
@@ -117,6 +111,7 @@ export default function BookLibrary() {
           <p>{error}</p>
 
           <button
+            type="button"
             className="buy-button"
             onClick={() => window.location.reload()}
           >
@@ -128,110 +123,160 @@ export default function BookLibrary() {
       {!loading && !error && (
         <>
           <div className="book-grid">
-            {filteredBooks.map((book) => (
-              <motion.article
-                key={book._id || book.id}
-                className="book-card"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                whileHover={{ y: -5 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="ebook-cover">
-                  {book.coverImage ? (
-                    <img
-                      src={book.coverImage}
-                      alt={`${book.title} cover`}
-                      className="ebook-cover-image"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <>
-                      <div className="cover-brand">
-                        <Code2 size={19} />
-                        <span>CodeSeed</span>
-                      </div>
+            {filteredBooks.map((book) => {
+              const comingSoon = Boolean(book.comingSoon);
 
-                      <div className="cover-content">
-                        <span>THE COMPLETE GUIDE</span>
+              const canPurchase =
+                !comingSoon &&
+                book.isPublished !== false &&
+                Boolean(book._id);
 
-                        <h3>
-                          {book.title || "Frontend Developer"}
-                        </h3>
+              return (
+                <motion.article
+                  key={book._id || book.id}
+                  className="book-card"
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  whileHover={{ y: -5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div
+                    className="ebook-cover"
+                    style={{ position: "relative" }}
+                  >
+                    {comingSoon && (
+                      <span
+                        className="coming-soon-badge"
+                        style={{
+                          position: "absolute",
+                          top: 12,
+                          left: 12,
+                          zIndex: 2,
+                          padding: "7px 12px",
+                          borderRadius: 20,
+                          background: "#f4c95d",
+                          color: "#201b10",
+                          fontSize: 11,
+                          fontWeight: 800,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Coming Soon
+                      </span>
+                    )}
 
-                        <p>Zero to Advanced</p>
+                    {book.coverImage ? (
+                      <img
+                        src={book.coverImage}
+                        alt={`${book.title} cover`}
+                        className="ebook-cover-image"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <>
+                        <div className="cover-brand">
+                          <Code2 size={19} />
+                          <span>CodeSeed</span>
+                        </div>
 
-                        <div className="cover-rule" />
+                        <div className="cover-content">
+                          <span>THE COMPLETE GUIDE</span>
 
-                        <small>
-                          {(
-                            book.subtitle || "Digital Edition"
-                          ).toUpperCase()}
+                          <h3>
+                            {book.title || "Frontend Developer"}
+                          </h3>
+
+                          <p>Zero to Advanced</p>
+
+                          <div className="cover-rule" />
+
+                          <small>
+                            {(
+                              book.subtitle || "Digital Edition"
+                            ).toUpperCase()}
+                          </small>
+                        </div>
+
+                        <span className="cover-symbol">
+                          {"</>"}
+                        </span>
+
+                        <small className="cover-footer">
+                          LEARN. BUILD. GROW.
                         </small>
-                      </div>
+                      </>
+                    )}
+                  </div>
 
-                      <span className="cover-symbol">
-                        {"</>"}
+                  <div className="book-info">
+                    <div className="book-meta">
+                      <span>
+                        {book.format || "Digital Ebook"}
                       </span>
 
-                      <small className="cover-footer">
-                        LEARN. BUILD. GROW.
-                      </small>
-                    </>
-                  )}
-                </div>
+                      <span>
+                        {book.level || "Beginner"}
+                      </span>
+                    </div>
 
-                <div className="book-info">
-                  <div className="book-meta">
-                    <span>
-                      {book.format || "Digital Ebook"}
-                    </span>
+                    <h3>{book.title}</h3>
 
-                    <span>
-                      {book.level || "Beginner"}
-                    </span>
+                    <p>{book.description}</p>
+
+                    <div className="price-row">
+                      <strong>
+                        ₹{book.launchPrice ?? 50}
+                      </strong>
+
+                      <del>
+                        ₹{book.regularPrice ?? 100}
+                      </del>
+
+                      <span className="discount-badge">
+                        50% OFF
+                      </span>
+                    </div>
+
+                    {comingSoon ? (
+                      <button
+                        type="button"
+                        className="buy-button"
+                        disabled
+                        aria-label={`${book.title} is coming soon`}
+                        style={{
+                          width: "100%",
+                          cursor: "not-allowed",
+                          opacity: 0.8,
+                        }}
+                      >
+                        Coming Soon
+                      </button>
+                    ) : canPurchase ? (
+                      <RazorpayButton
+                        bookId={book._id}
+                        bookTitle={book.title}
+                      />
+                    ) : (
+                      <button
+                        type="button"
+                        className="buy-button"
+                        disabled
+                      >
+                        Not Available
+                      </button>
+                    )}
+
+                    <small className="book-note">
+                      {comingSoon
+                        ? "This ebook is not available for purchase yet."
+                        : "Digital ebook from CodeSeed."}
+                    </small>
                   </div>
-
-                  <h3>{book.title}</h3>
-
-                  <p>{book.description}</p>
-
-                  <div className="price-row">
-                    <strong>
-                      ₹{book.launchPrice ?? 50}
-                    </strong>
-
-                    <del>
-                      ₹{book.regularPrice ?? 100}
-                    </del>
-
-                    <span className="discount-badge">
-                      50% OFF
-                    </span>
-                  </div>
-
-                  {book.isPublished !== false &&
-                  book._id ? (
-                    <RazorpayButton
-                      bookId={book._id}
-                      bookTitle={book.title}
-                    />
-                  ) : (
-                    <button
-                      className="buy-button"
-                      disabled
-                    >
-                      Coming Soon
-                    </button>
-                  )}
-
-                  <small className="book-note">
-                    Digital ebook from CodeSeed.
-                  </small>
-                </div>
-              </motion.article>
-            ))}
+                </motion.article>
+              );
+            })}
           </div>
 
           {filteredBooks.length === 0 && (
