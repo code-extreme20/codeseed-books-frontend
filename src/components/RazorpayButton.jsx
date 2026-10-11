@@ -4,7 +4,8 @@ import axios from "axios";
 import "./RazorpayButton.css";
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -13,23 +14,36 @@ function loadRazorpayScript() {
       return;
     }
 
+    const scriptUrl =
+      "https://checkout.razorpay.com/v1/checkout.js";
+
     const existingScript = document.querySelector(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+      `script[src="${scriptUrl}"]`
     );
 
     if (existingScript) {
-      existingScript.addEventListener("load", () =>
-        resolve(Boolean(window.Razorpay))
+      existingScript.addEventListener(
+        "load",
+        () => resolve(Boolean(window.Razorpay)),
+        { once: true }
       );
-      existingScript.addEventListener("error", () => resolve(false));
+
+      existingScript.addEventListener(
+        "error",
+        () => resolve(false),
+        { once: true }
+      );
+
       return;
     }
 
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = scriptUrl;
     script.async = true;
 
-    script.onload = () => resolve(Boolean(window.Razorpay));
+    script.onload = () =>
+      resolve(Boolean(window.Razorpay));
+
     script.onerror = () => resolve(false);
 
     document.body.appendChild(script);
@@ -44,7 +58,12 @@ function getErrorMessage(error, fallback) {
   );
 }
 
-export default function RazorpayButton({ bookId, bookTitle }) {
+export default function RazorpayButton({
+  bookId,
+  bookTitle,
+}) {
+  const storageKey = `codeseed_download_${bookId}`;
+
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [retryingVerification, setRetryingVerification] =
@@ -53,16 +72,17 @@ export default function RazorpayButton({ bookId, bookTitle }) {
   const [verificationDetails, setVerificationDetails] =
     useState(null);
 
-  const storageKey = `codeseed_download_${bookId}`;
+  const [hasDownloadToken, setHasDownloadToken] = useState(
+    () => {
+      if (!bookId || typeof window === "undefined") {
+        return false;
+      }
 
-  const [hasDownloadToken, setHasDownloadToken] = useState(() => {
-    if (!bookId || typeof window === "undefined") return false;
+      return Boolean(sessionStorage.getItem(storageKey));
+    }
+  );
 
-    return Boolean(sessionStorage.getItem(storageKey));
-  });
-
-  // Verify payment and save the download token.
-  const verifyExistingPayment = async (details) => {
+  async function verifyExistingPayment(details) {
     const { data } = await axios.post(
       `${API_URL}/payments/verify`,
       details
@@ -72,23 +92,23 @@ export default function RazorpayButton({ bookId, bookTitle }) {
 
     if (!data?.success || !token) {
       throw new Error(
-        "Verification did not return a download token."
+        "Payment verification did not return a download token."
       );
     }
 
     sessionStorage.setItem(storageKey, token);
     setHasDownloadToken(true);
-    setMessage("Payment verified. Your ebook is ready to download.");
-  };
 
-  // Create Razorpay order and open checkout.
-  const handlePayment = async () => {
+    setMessage(
+      "Payment verified. Your ebook is ready to download."
+    );
+  }
+
+  async function handlePayment() {
     if (!bookId || loading) {
-      if (!bookId) {
-        setMessage(
-          "Book information is missing. Please refresh the page."
-        );
-      }
+      setMessage(
+        "Book information is missing. Please refresh the page."
+      );
       return;
     }
 
@@ -110,8 +130,15 @@ export default function RazorpayButton({ bookId, bookTitle }) {
         { bookId }
       );
 
-      if (!data?.success || !data?.order?.id || !data?.keyId) {
-        throw new Error("Could not create the payment order.");
+      if (
+        !data?.success ||
+        !data?.order?.id ||
+        !data?.keyId
+      ) {
+        throw new Error(
+          data?.message ||
+            "Could not create the payment order."
+        );
       }
 
       const checkout = new window.Razorpay({
@@ -119,7 +146,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
         amount: data.order.amount,
         currency: data.order.currency,
         name: "CodeSeed",
-        description: bookTitle || "Frontend Developer Ebook",
+        description: bookTitle || "CodeSeed Ebook",
         order_id: data.order.id,
 
         handler: async (response) => {
@@ -139,7 +166,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
             setMessage(
               getErrorMessage(
                 error,
-                "Verification is pending. Please retry verification."
+                "Verification is pending. Retry verification."
               )
             );
           } finally {
@@ -150,7 +177,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
         modal: {
           ondismiss: () => {
             setMessage(
-              "Checkout closed. If you paid, check your payment status before trying again."
+              "Checkout closed. If you completed payment, verify its status before trying again."
             );
           },
         },
@@ -163,23 +190,27 @@ export default function RazorpayButton({ bookId, bookTitle }) {
       checkout.on("payment.failed", (response) => {
         setMessage(
           response?.error?.description ||
-            "Payment failed. Check the payment status before retrying."
+            "Payment failed. Please check the payment status."
         );
       });
 
       checkout.open();
     } catch (error) {
       setMessage(
-        getErrorMessage(error, "Unable to start checkout.")
+        getErrorMessage(
+          error,
+          "Unable to start checkout."
+        )
       );
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  // Retry verification without creating another order.
-  const handleRetryVerification = async () => {
-    if (!verificationDetails || retryingVerification) return;
+  async function handleRetryVerification() {
+    if (!verificationDetails || retryingVerification) {
+      return;
+    }
 
     setRetryingVerification(true);
     setMessage("Verifying your existing payment...");
@@ -196,10 +227,9 @@ export default function RazorpayButton({ bookId, bookTitle }) {
     } finally {
       setRetryingVerification(false);
     }
-  };
+  }
 
-  // Download purchased PDF.
-  const handleDownload = async () => {
+  async function handleDownload() {
     const token = sessionStorage.getItem(storageKey);
 
     if (!bookId || !token) {
@@ -244,7 +274,8 @@ export default function RazorpayButton({ bookId, bookTitle }) {
 
       setMessage("Your ebook download has started.");
     } catch (error) {
-      let errorMessage = "Download failed. Please try again.";
+      let errorMessage =
+        "Download failed. Please try again.";
 
       if (error.response?.data instanceof Blob) {
         try {
@@ -252,7 +283,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
           const parsed = JSON.parse(body);
           errorMessage = parsed.message || errorMessage;
         } catch {
-          // Use fallback message.
+          // Keep the fallback message.
         }
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
@@ -270,7 +301,7 @@ export default function RazorpayButton({ bookId, bookTitle }) {
     } finally {
       setDownloading(false);
     }
-  };
+  }
 
   return (
     <div className="razorpay-purchase">
@@ -309,7 +340,10 @@ export default function RazorpayButton({ bookId, bookTitle }) {
             <>
               <span aria-hidden="true">🛒</span>
               Buy Ebook
-              <span className="purchase-arrow" aria-hidden="true">
+              <span
+                className="purchase-arrow"
+                aria-hidden="true"
+              >
                 →
               </span>
             </>
