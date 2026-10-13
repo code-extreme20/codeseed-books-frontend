@@ -17,6 +17,7 @@ import {
   Routes,
   Route,
   Navigate,
+  Link,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -27,7 +28,8 @@ import AdminLayout from "./admin/Adminlayout";
 import Dashboard from "./admin/Dashboard";
 import Orders from "./admin/Orders";
 import OrderDetails from "./admin/OrderDetails";
-
+import Support from "./components/Support";
+import SupportTickets from "./admin/SupportTickets";
 import "./admin/admin.css";
 import "./index.css";
 
@@ -167,9 +169,11 @@ function HomePage() {
                     <Code2 size={17} />
                     CODESEED
                   </div>
+
                   <span className="premium-book-kicker">
                     YOUR DIGITAL LIBRARY
                   </span>
+
                   <h2>
                     Learn.
                     <br />
@@ -177,6 +181,7 @@ function HomePage() {
                     <br />
                     <span>Grow.</span>
                   </h2>
+
                   <div className="premium-book-line" />
                   <p>One page can spark a new beginning.</p>
                   <div className="premium-book-symbol">&lt;/&gt;</div>
@@ -225,9 +230,11 @@ function HomePage() {
               <span className="premium-section-kicker">
                 THE DIGITAL LIBRARY
               </span>
+
               <h2>
                 Find your next <span>favourite.</span>
               </h2>
+
               <p>
                 Browse the collection and choose what inspires you.
               </p>
@@ -248,9 +255,11 @@ function HomePage() {
                 <span className="premium-section-kicker">
                   A BETTER WAY TO DISCOVER
                 </span>
+
                 <h2>
                   Made for curious <span>minds.</span>
                 </h2>
+
                 <p>
                   Whether you are learning a skill or exploring a
                   new story, your next discovery starts here.
@@ -259,44 +268,56 @@ function HomePage() {
             </div>
 
             <div className="premium-benefit-grid">
-              {benefits.map(({ icon: Icon, title, description }, index) => (
-                <motion.article
-                  className="premium-benefit-card"
-                  key={title}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.12, duration: 0.45 }}
-                  whileHover={{ y: -6 }}
-                >
-                  <div className="premium-benefit-icon">
-                    <Icon size={22} />
-                  </div>
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                  <span className="premium-benefit-number">
-                    0{index + 1}
-                  </span>
-                </motion.article>
-              ))}
+              {benefits.map(
+                ({ icon: Icon, title, description }, index) => (
+                  <motion.article
+                    className="premium-benefit-card"
+                    key={title}
+                    initial={{ opacity: 0, y: 22 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      delay: index * 0.12,
+                      duration: 0.45,
+                    }}
+                    whileHover={{ y: -6 }}
+                  >
+                    <div className="premium-benefit-icon">
+                      <Icon size={22} />
+                    </div>
+
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+
+                    <span className="premium-benefit-number">
+                      0{index + 1}
+                    </span>
+                  </motion.article>
+                )
+              )}
             </div>
           </div>
         </section>
 
         <section className="premium-closing">
           <div className="premium-closing-glow" />
+
           <div className="premium-closing-content">
             <Sparkles size={26} />
+
             <span className="premium-section-kicker">
               START YOUR NEXT CHAPTER
             </span>
+
             <h2>
               One discovery can
               <span> change everything.</span>
             </h2>
+
             <p>
               Explore ideas. Learn new things. Find your next read.
             </p>
+
             <a href="#books" className="premium-primary-button">
               Explore CodeSeed <ArrowRight size={17} />
             </a>
@@ -310,7 +331,10 @@ function HomePage() {
             <span className="premium-footer-icon">
               <Code2 size={20} />
             </span>
-            <span>Code<span>Seed</span></span>
+
+            <span>
+              Code<span>Seed</span>
+            </span>
           </a>
 
           <p>
@@ -321,6 +345,7 @@ function HomePage() {
             <a href="#home">Home</a>
             <a href="#books">Library</a>
             <a href="#about">About</a>
+            <Link to="/support">Customer Support</Link>
           </div>
 
           <div className="premium-footer-bottom">
@@ -338,6 +363,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/support" element={<Support />} />
 
         <Route path="/admin" element={<Login />} />
 
@@ -345,6 +371,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
           <Route path="orders/:id" element={<OrderDetails />} />
+          <Route path="support" element={<SupportTickets />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

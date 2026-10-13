@@ -12,9 +12,11 @@ import {
   LayoutDashboard,
   LogOut,
   ShoppingBag,
+  Headset,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -33,7 +35,9 @@ export default function AdminLayout() {
 
       try {
         await axios.get(`${API_URL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (active) setStatus("authorized");
@@ -73,12 +77,15 @@ export default function AdminLayout() {
       <aside className="admin-sidebar">
         <a href="/" className="admin-brand">
           <Code2 size={25} />
-          CodeSeed
+          <span>CodeSeed</span>
         </a>
 
-        <span className="admin-side-label">WORKSPACE</span>
+        <span className="admin-side-label">
+          WORKSPACE
+        </span>
 
         <nav className="admin-side-nav">
+          {/* Dashboard */}
           <NavLink
             to="/admin/dashboard"
             end
@@ -87,9 +94,10 @@ export default function AdminLayout() {
             }
           >
             <LayoutDashboard size={18} />
-            Dashboard
+            <span>Dashboard</span>
           </NavLink>
 
+          {/* Orders */}
           <NavLink
             to="/admin/dashboard/orders"
             className={({ isActive }) =>
@@ -97,23 +105,36 @@ export default function AdminLayout() {
             }
           >
             <ShoppingBag size={18} />
-            Orders
+            <span>Orders</span>
+          </NavLink>
+
+          {/* Support Tickets */}
+          <NavLink
+            to="/admin/dashboard/support"
+            className={({ isActive }) =>
+              `admin-side-link${isActive ? " active" : ""}`
+            }
+          >
+            <Headset size={18} />
+            <span>Support Tickets</span>
           </NavLink>
         </nav>
 
+        {/* Logout */}
         <button
           type="button"
           className="admin-logout"
           onClick={handleLogout}
         >
           <LogOut size={18} />
-          Sign out
+          <span>Sign out</span>
         </button>
       </aside>
 
       <div className="admin-main">
         <header className="admin-topbar">
           <span>Admin workspace</span>
+
           <span className="admin-status-dot">
             Admin access
           </span>
