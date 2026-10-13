@@ -7,6 +7,9 @@ import {
   BookOpen,
   Layers,
   GraduationCap,
+  Zap,
+  ShieldCheck,
+  Star,
 } from "lucide-react";
 
 import {
@@ -26,199 +29,307 @@ import Orders from "./admin/Orders";
 import OrderDetails from "./admin/OrderDetails";
 
 import "./admin/admin.css";
+import "./index.css";
 
 const benefits = [
   {
     icon: BookOpen,
-    title: "Beginner-friendly",
-    description: "Clear explanations that help you learn step by step.",
+    title: "Knowledge for everyone",
+    description:
+      "Explore ebooks for coding, creativity, fiction, and personal growth.",
   },
   {
     icon: Code2,
-    title: "Practical learning",
-    description: "Understand concepts through coding examples and projects.",
+    title: "Learn by doing",
+    description:
+      "Discover practical guides that help turn ideas into real skills.",
   },
   {
     icon: GraduationCap,
     title: "Learn at your pace",
-    description: "Study when you want and revisit lessons whenever needed.",
+    description:
+      "Read anytime and revisit your digital library whenever you want.",
   },
 ];
 
+const reveal = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: "easeOut" },
+  },
+};
+
 function HomePage() {
   return (
-    <>
+    <div className="codeseed-home">
       <Navbar />
 
       <main>
-        <section className="hero section-wrap" id="home">
-          <motion.div
-            className="hero-copy"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="eyebrow">
-              <Sparkles size={15} />
-              YOUR CODING JOURNEY STARTS HERE
-            </span>
+        <section className="premium-hero" id="home">
+          <div className="premium-hero-glow premium-hero-glow-one" />
+          <div className="premium-hero-glow premium-hero-glow-two" />
 
-            <h1>
-              Don't just learn code.
-              <span> Build your future.</span>
-            </h1>
-
-            <p className="hero-description">
-              Discover practical ebooks that make web development
-              easier to understand. Learn step by step, practice
-              your skills, and build something real.
-            </p>
-
-            <div className="hero-actions">
-              <a href="#books" className="primary-button">
-                Explore Books <ArrowRight size={17} />
-              </a>
-
-              <a href="#about" className="secondary-button">
-                Discover CodeSeed
-              </a>
-            </div>
-
-            <div className="hero-note">
-              <span>✳</span>
-              Learn at your own pace
-              <span className="note-divider">/</span>
-              Build practical skills
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="hero-visual"
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <div className="visual-glow" />
-
+          <div className="premium-hero-inner">
             <motion.div
-              className="floating-chip chip-one"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity }}
+              className="premium-hero-copy"
+              variants={reveal}
+              initial="hidden"
+              animate="visible"
             >
-              {"<html />"}
+              <div className="premium-eyebrow">
+                <Sparkles size={15} />
+                <span>YOUR NEXT CHAPTER STARTS HERE</span>
+              </div>
+
+              <h1>
+                Feed your curiosity.
+                <span className="premium-gradient-text">
+                  Grow without limits.
+                </span>
+              </h1>
+
+              <p className="premium-hero-description">
+                From practical programming guides to stories that
+                spark imagination, discover digital books made for
+                your next big idea.
+              </p>
+
+              <div className="premium-hero-actions">
+                <a href="#books" className="premium-primary-button">
+                  <BookOpen size={18} />
+                  Explore the library
+                  <ArrowRight size={17} />
+                </a>
+
+                <a href="#about" className="premium-secondary-button">
+                  Discover CodeSeed
+                </a>
+              </div>
+
+              <div className="premium-trust-row">
+                <span>
+                  <ShieldCheck size={16} />
+                  Digital reading
+                </span>
+                <i />
+                <span>
+                  <Zap size={16} />
+                  Learn at your pace
+                </span>
+              </div>
             </motion.div>
 
             <motion.div
-              className="floating-chip chip-two"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 3.5, repeat: Infinity }}
+              className="premium-hero-art"
+              initial={{ opacity: 0, scale: 0.92, rotate: 2 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 }}
             >
-              {"{ learn: true }"}
-            </motion.div>
+              <div className="premium-orbit premium-orbit-one" />
+              <div className="premium-orbit premium-orbit-two" />
+              <div className="premium-art-glow" />
 
-            <div className="code-window">
-              <div className="code-window-header">
-                <div className="window-dots">
-                  <i />
-                  <i />
-                  <i />
+              <motion.div
+                className="premium-floating-tag premium-tag-top"
+                animate={{ y: [0, -9, 0] }}
+                transition={{ duration: 3.2, repeat: Infinity }}
+              >
+                <Code2 size={16} />
+                Learn something new
+              </motion.div>
+
+              <motion.div
+                className="premium-floating-tag premium-tag-bottom"
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 3.8, repeat: Infinity }}
+              >
+                <Sparkles size={16} />
+                Ideas become skills
+              </motion.div>
+
+              <div className="premium-book-stack">
+                <div className="premium-book premium-book-back">
+                  <span>IMAGINE</span>
+                  <strong>Ideas into action.</strong>
+                  <div className="premium-book-decoration">✳</div>
                 </div>
-                <span>your-future.jsx</span>
-              </div>
 
-              <div className="code-lines">
-                <p><span>01</span> <b>const</b> future = {"{"}</p>
-                <p><span>02</span> &nbsp; skills: <em>"growing"</em>,</p>
-                <p><span>03</span> &nbsp; projects: <em>"building"</em>,</p>
-                <p><span>04</span> &nbsp; mindset: <em>"curious"</em></p>
-                <p><span>05</span> {"}"};</p>
-                <br />
-                <p><span>06</span> <b>keepLearning();</b></p>
-              </div>
+                <div className="premium-book premium-book-middle">
+                  <span>DISCOVER</span>
+                  <strong>Explore new worlds.</strong>
+                  <div className="premium-book-decoration">✦</div>
+                </div>
 
-              <div className="code-window-footer">
-                <span><i /> READY TO BUILD</span>
-                <Code2 size={15} />
+                <div className="premium-book premium-book-front">
+                  <div className="premium-book-brand">
+                    <Code2 size={17} />
+                    CODESEED
+                  </div>
+                  <span className="premium-book-kicker">
+                    YOUR DIGITAL LIBRARY
+                  </span>
+                  <h2>
+                    Learn.
+                    <br />
+                    Build.
+                    <br />
+                    <span>Grow.</span>
+                  </h2>
+                  <div className="premium-book-line" />
+                  <p>One page can spark a new beginning.</p>
+                  <div className="premium-book-symbol">&lt;/&gt;</div>
+                </div>
               </div>
+            </motion.div>
+          </div>
+
+          <div className="premium-hero-bottom">
+            <span>CURIOUS MINDS WELCOME</span>
+            <div />
+            <span>FIND YOUR NEXT READ ↓</span>
+          </div>
+        </section>
+
+        <section className="premium-promo-wrap">
+          <motion.div
+            className="premium-promo"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+          >
+            <div className="premium-promo-icon">
+              <Star size={22} />
             </div>
 
-            <div className="visual-caption">
-              <span className="caption-icon">
-                <Layers size={19} />
-              </span>
-              <div>
-                <strong>Learn. Build. Grow.</strong>
-                <small>One line at a time.</small>
-              </div>
+            <div className="premium-promo-copy">
+              <span>THE CODESEED EXPERIENCE</span>
+              <h2>Your next favourite read is waiting.</h2>
+              <p>
+                Explore the collection and discover something
+                worth learning, sharing, or getting lost in.
+              </p>
             </div>
+
+            <a href="#books" className="premium-promo-button">
+              Browse books <ArrowRight size={17} />
+            </a>
           </motion.div>
         </section>
 
-        <BookLibrary />
+        <section className="premium-library-section" id="books">
+          <div className="premium-section-heading">
+            <div>
+              <span className="premium-section-kicker">
+                THE DIGITAL LIBRARY
+              </span>
+              <h2>
+                Find your next <span>favourite.</span>
+              </h2>
+              <p>
+                Browse the collection and choose what inspires you.
+              </p>
+            </div>
 
-        <section className="about section-wrap" id="about">
-          <div className="section-heading">
-            <span className="eyebrow">THE CODESEED APPROACH</span>
+            <a href="#about" className="premium-text-link">
+              Why CodeSeed? <ArrowRight size={16} />
+            </a>
+          </div>
+
+          <BookLibrary />
+        </section>
+
+        <section className="premium-about" id="about">
+          <div className="premium-about-inner">
+            <div className="premium-section-heading premium-about-heading">
+              <div>
+                <span className="premium-section-kicker">
+                  A BETTER WAY TO DISCOVER
+                </span>
+                <h2>
+                  Made for curious <span>minds.</span>
+                </h2>
+                <p>
+                  Whether you are learning a skill or exploring a
+                  new story, your next discovery starts here.
+                </p>
+              </div>
+            </div>
+
+            <div className="premium-benefit-grid">
+              {benefits.map(({ icon: Icon, title, description }, index) => (
+                <motion.article
+                  className="premium-benefit-card"
+                  key={title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.12, duration: 0.45 }}
+                  whileHover={{ y: -6 }}
+                >
+                  <div className="premium-benefit-icon">
+                    <Icon size={22} />
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                  <span className="premium-benefit-number">
+                    0{index + 1}
+                  </span>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="premium-closing">
+          <div className="premium-closing-glow" />
+          <div className="premium-closing-content">
+            <Sparkles size={26} />
+            <span className="premium-section-kicker">
+              START YOUR NEXT CHAPTER
+            </span>
             <h2>
-              Learning should feel like <em>progress.</em>
+              One discovery can
+              <span> change everything.</span>
             </h2>
             <p>
-              Clear explanations. Practical knowledge. Small steps forward.
+              Explore ideas. Learn new things. Find your next read.
             </p>
+            <a href="#books" className="premium-primary-button">
+              Explore CodeSeed <ArrowRight size={17} />
+            </a>
           </div>
-
-          <div className="benefit-grid">
-            {benefits.map(({ icon: Icon, title, description }, index) => (
-              <motion.article
-                className="benefit-card"
-                key={title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.12, duration: 0.4 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="benefit-icon">
-                  <Icon size={21} />
-                </div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </motion.article>
-            ))}
-          </div>
-        </section>
-
-        <section className="closing-section" id="purchase">
-          <Sparkles size={25} />
-          <h2>Your next chapter starts today.</h2>
-          <p>Learn something new. Build something real.</p>
-          <a href="#books" className="primary-button">
-            Explore the Ebook <ArrowRight size={17} />
-          </a>
         </section>
       </main>
 
-      <footer className="footer">
-        <div className="footer-inner section-wrap">
-          <a href="#home" className="footer-brand">
-            <Code2 size={21} /> CodeSeed
+      <footer className="premium-footer">
+        <div className="premium-footer-inner">
+          <a href="#home" className="premium-footer-brand">
+            <span className="premium-footer-icon">
+              <Code2 size={20} />
+            </span>
+            <span>Code<span>Seed</span></span>
           </a>
 
-          <p>Helping curious minds grow, one line at a time.</p>
+          <p>
+            A little curiosity can grow into something extraordinary.
+          </p>
 
-          <div className="footer-links">
+          <div className="premium-footer-links">
             <a href="#home">Home</a>
-            <a href="#books">Books</a>
+            <a href="#books">Library</a>
             <a href="#about">About</a>
           </div>
 
-          <div className="footer-bottom">
+          <div className="premium-footer-bottom">
             <span>© {new Date().getFullYear()} CodeSeed</span>
-            <span>Learn. Build. Grow. ✳</span>
+            <span>Made for curious minds ✳</span>
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
 
