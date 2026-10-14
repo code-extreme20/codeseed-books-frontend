@@ -4617,3 +4617,40 @@ input:focus-visible {
     animation: none !important;
   }
 }
+/* CodeSeed mobile navbar fix */
+@media (max-width: 700px) {
+  .codeseed-home .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    overflow: visible;
+  }
+
+  .codeseed-home .mobile-menu-button {
+    display: grid;
+    place-items: center;
+    position: relative;
+    z-index: 1002;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .codeseed-home .mobile-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #151124;
+    border-bottom: 1px solid rgba(185, 163, 255, 0.2);
+  }
+
+  .codeseed-home .mobile-nav a {
+    color: #f7f4ff;
+    padding: 15px 18px;
+    text-decoration: none;
+  }
+}
