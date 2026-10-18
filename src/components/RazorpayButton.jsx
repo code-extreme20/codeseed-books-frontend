@@ -40,10 +40,7 @@ function loadRazorpayScript() {
     const script = document.createElement("script");
     script.src = scriptUrl;
     script.async = true;
-
-    script.onload = () =>
-      resolve(Boolean(window.Razorpay));
-
+    script.onload = () => resolve(Boolean(window.Razorpay));
     script.onerror = () => resolve(false);
 
     document.body.appendChild(script);
@@ -58,12 +55,10 @@ function getErrorMessage(error, fallback) {
   );
 }
 
-export default function RazorpayButton({
-  bookId,
-  bookTitle,
-}) {
+export default function RazorpayButton({ bookId, bookTitle }) {
   const storageKey = `codeseed_download_${bookId}`;
 
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [retryingVerification, setRetryingVerification] =
@@ -72,15 +67,13 @@ export default function RazorpayButton({
   const [verificationDetails, setVerificationDetails] =
     useState(null);
 
-  const [hasDownloadToken, setHasDownloadToken] = useState(
-    () => {
-      if (!bookId || typeof window === "undefined") {
-        return false;
-      }
-
-      return Boolean(sessionStorage.getItem(storageKey));
+  const [hasDownloadToken, setHasDownloadToken] = useState(() => {
+    if (!bookId || typeof window === "undefined") {
+      return false;
     }
-  );
+
+    return Boolean(sessionStorage.getItem(storageKey));
+  });
 
   async function verifyExistingPayment(details) {
     const { data } = await axios.post(
@@ -104,10 +97,23 @@ export default function RazorpayButton({
     );
   }
 
-  async function handlePayment() {
+  async function handlePayment(event) {
+    event?.preventDefault();
+
     if (!bookId || loading) {
       setMessage(
         "Book information is missing. Please refresh the page."
+      );
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+    ) {
+      setMessage(
+        "Please enter a valid email address for your purchase confirmation."
       );
       return;
     }
@@ -127,7 +133,10 @@ export default function RazorpayButton({
 
       const { data } = await axios.post(
         `${API_URL}/payments/create-order`,
-        { bookId }
+        {
+          bookId,
+          email: normalizedEmail,
+        }
       );
 
       if (
@@ -136,8 +145,7 @@ export default function RazorpayButton({
         !data?.keyId
       ) {
         throw new Error(
-          data?.message ||
-            "Could not create the payment order."
+          data?.message || "Could not create the payment order."
         );
       }
 
@@ -148,6 +156,10 @@ export default function RazorpayButton({
         name: "CodeSeed",
         description: bookTitle || "CodeSeed Ebook",
         order_id: data.order.id,
+
+        prefill: {
+          email: normalizedEmail,
+        },
 
         handler: async (response) => {
           const details = {
@@ -197,10 +209,7 @@ export default function RazorpayButton({
       checkout.open();
     } catch (error) {
       setMessage(
-        getErrorMessage(
-          error,
-          "Unable to start checkout."
-        )
+        getErrorMessage(error, "Unable to start checkout.")
       );
     } finally {
       setLoading(false);
@@ -325,30 +334,61 @@ export default function RazorpayButton({
           )}
         </button>
       ) : (
-        <button
-          type="button"
-          className="purchase-btn buy-ebook-btn"
-          onClick={handlePayment}
-          disabled={loading || !bookId}
-        >
-          {loading ? (
-            <>
-              <span className="purchase-spinner" />
-              Please wait...
-            </>
-          ) : (
-            <>
-              <span aria-hidden="true">🛒</span>
-              Buy Ebook
-              <span
-                className="purchase-arrow"
-                aria-hidden="true"
-              >
-                →
-              </span>
-            </>
-          )}
-        </button>
+        <>
+          <label
+            htmlFor={`purchase-email-${bookId}`}
+            className="purchase-email-label"
+          >
+            Email for purchase confirmation
+          </label>
+
+          <input
+            id={`purchase-email-${bookId}`}
+            type="email"
+            className="purchase-email-input"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+            autoComplete="email"
+            required
+            disabled={loading || !bookId}
+            maxLength={254}
+            style={{
+              boxSizing: "border-box",
+              width: "100%",
+              padding: "12px 14px",
+              marginBottom: "12px",
+              border: "1px solid #d1d5db",
+              borderRadius: "10px",
+              fontSize: "14px",
+            }}
+          />
+
+          <button
+            type="button"
+            className="purchase-btn buy-ebook-btn"
+            onClick={handlePayment}
+            disabled={loading || !bookId}
+          >
+            {loading ? (
+              <>
+                <span className="purchase-spinner" />
+                Please wait...
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true">🛒</span>
+                Buy Ebook
+                <span
+                  className="purchase-arrow"
+                  aria-hidden="true"
+                >
+                  →
+                </span>
+              </>
+            )}
+          </button>
+        </>
       )}
 
       {verificationDetails && (
