@@ -30,6 +30,11 @@ import Orders from "./admin/Orders";
 import OrderDetails from "./admin/OrderDetails";
 import Support from "./components/Support";
 import SupportTickets from "./admin/SupportTickets";
+import {
+  ContactPage,
+  PrivacyPolicy,
+  RefundPolicy,
+} from "./PolicyPages";
 import "./admin/admin.css";
 import "./index.css";
 
@@ -346,6 +351,9 @@ function HomePage() {
             <a href="#books">Library</a>
             <a href="#about">About</a>
             <Link to="/support">Customer Support</Link>
+            <Link to="/contact">Contact Us</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/refund-policy">Refund & Cancellation</Link>
           </div>
 
           <div className="premium-footer-bottom">
@@ -364,7 +372,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/support" element={<Support />} />
-
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
         <Route path="/admin" element={<Login />} />
 
         <Route path="/admin/dashboard" element={<AdminLayout />}>
